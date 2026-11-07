@@ -7,18 +7,18 @@ const userSchema = new Schema({
         type: String,
         unique: [true, "username already taken"],
         required: true,
-        // lowercase: true,
-        // trim: true,
-        // index: true,
+        lowercase: true,
+        trim: true,
+        index: true,
     },
 
     email: {
         type: String,
         unique: [true, "Account already exists with this email address"],
         required: true,
-        // lowercase: true,
-        // trim: true,
-        // index: true,
+        lowercase: true,
+        trim: true,
+        index: true,
     },
 
     password: {
@@ -47,7 +47,7 @@ const userSchema = new Schema({
     fullname: {
         type: String,
         required: true,
-        // trim: true,
+        trim: true,
     }
 }, { timestamps: true });
 
