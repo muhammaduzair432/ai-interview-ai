@@ -1,12 +1,23 @@
 import  express from "express";
 import passport from "passport";
 import  "./services/passport.js";
-import userModel from "./models/user.model.js";
+import cookieParser from "cookie-parser";
+
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(passport.initialize());
+app.use(cookieParser());
+
 
 export {app};
+
+
+
+// routes import 
+import userRouter from "./routes/auth.route.js"
+// routes decleration 
+//  you cant directly use routes when you sepearted the things or setup or configuration like(seperated in different files ). so thats why you have to use middleware then you can create routes.
+ app.use("/api/v1/users",userRouter)

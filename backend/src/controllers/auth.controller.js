@@ -1,4 +1,4 @@
-import  userModel  from "../models/user.model.js";
+import  {userModel}  from "../models/user.model.js";
 import  ApiError  from "../utils/Apierror.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import uploadOnCloudinary from "../utils/cloudinary.js";
