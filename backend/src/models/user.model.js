@@ -2,20 +2,19 @@ import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-
 const userSchema = new Schema({
     username: {
         type: String,
-        unique: [ true, "username already taken" ],
+        unique: [true, "username already taken"],
         required: true,
-    //        lowercase: true,
-    //   trim: true,
-    //   index: true,
+        // lowercase: true,
+        // trim: true,
+        // index: true,
     },
 
     email: {
         type: String,
-        unique: [ true, "Account already exists with this email address" ],
+        unique: [true, "Account already exists with this email address"],
         required: true,
         // lowercase: true,
         // trim: true,
@@ -24,29 +23,43 @@ const userSchema = new Schema({
 
     password: {
         type: String,
-        required: true
+        // Password is required ONLY IF the user does NOT have a googleId
+        required: function () {
+            return !this.googleId;
+        }
     },
-    avatar:{
+
+    // Added for Google Authentication
+    googleId: {
         type: String,
-        default:""
+        default: null,
     },
-        refreshToken: {
+
+    avatar: {
+        type: String,
+        default: ""
+    },
+
+    refreshToken: {
         type: String,
     },
-    fullname:{
+
+    fullname: {
         type: String,
         required: true,
         // trim: true,
-        
     }
-},{timestamps: true});
+}, { timestamps: true });
+
 userSchema.pre("save", async function () {
-    if (!this.isModified("password")) return;
+    // If the password wasn't modified or doesn't exist (e.g. Google user), skip hashing
+    if (!this.isModified("password") || !this.password) return;
 
     this.password = await bcrypt.hash(this.password, 10);
 });
 
 userSchema.methods.comparePassword = async function (password) {
+    if (!this.password) return false; // Google users don't have local passwords
     return await bcrypt.compare(password, this.password);
 }
 
@@ -61,26 +74,19 @@ userSchema.methods.generateAccessToken = function () {
         {
             expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
         }
-    )
-
-
-}
+    );
+};
 
 userSchema.methods.generateRefreshToken = function () {
     return jwt.sign({
         _id: this._id,
-
     },
         process.env.REFRESH_TOKEN_SECRET,
         {
             expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
         }
-    )
+    );
+};
 
-
-}
-
-
-
-export const userModel = userSchema.model("users", userSchema)
-
+// Fixed the export syntax bug from userSchema.model to mongoose.model
+export const userModel = mongoose.model("User", userSchema);
