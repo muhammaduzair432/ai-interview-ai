@@ -20,6 +20,8 @@ export {app};
 
 // routes import 
 import userRouter from "./routes/auth.route.js"
+import authRoutes from "./routes/auth.route.js";
 // routes decleration 
 //  you cant directly use routes when you sepearted the things or setup or configuration like(seperated in different files ). so thats why you have to use middleware then you can create routes.
- app.use("/api/v1/users",userRouter)
+app.use("/api/v1/users",userRouter)
+app.use("/api/auth", authRoutes);

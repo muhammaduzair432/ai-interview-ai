@@ -5,6 +5,7 @@ import { logoutUser } from "../controllers/auth.controller.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 import passport from "passport";
 
+
 const router= Router()
 router.route("/registerUser").post( upload.fields([
     {name:"avatar",
