@@ -7,16 +7,16 @@ import  {ApiError}  from "../utils/Apierror.js";
 export const verifyJwt=asyncHandler(async(req, _ ,next)=>{
 try {
         const token= req.cookies.accessToken || req.header("Authorization")?.replace("Bearer ", ""  );
-        console.log("TOKEN:", token);
-        console.log("req.cookies:", req.cookies);
-console.log("req.headers:", req.header);
+//         console.log("TOKEN:", token);
+//         console.log("req.cookies:", req.cookies);
+// console.log("req.headers:", req.header);
 
         if(!token){
             throw new ApiError(401,"Unauthorized request")
         }
         
         const decodedToken=jwt.verify(token,process.env.ACCESS_TOKEN_SECRET)
-        const user= await User.findById(decodedToken._id).select("-password -refreshTokken")
+        const user= await userModel.findById(decodedToken._id).select("-password -refreshTokken")
         if(!user){
             throw new ApiError(401,"invalid access token")
         }
