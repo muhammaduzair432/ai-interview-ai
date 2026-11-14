@@ -1,7 +1,8 @@
 
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/Apierror.js";
-import { interviewReportModel } from "../models/interviewReport.model.js";
+import  interviewReportModel  from "../models/interviewReport.model.js";
+import {PDFParse} from "pdf-parse"; 
 
 import { generateInterviewReport } from "../services/ai.service.js";
 
@@ -22,7 +23,7 @@ async function generateInterViewReportController(req, res) {
     }
 
     // Extract text from PDF
-    const pdf = new pdfParse.PDFParse(
+    const pdf = new PDFParse(
       Uint8Array.from(req.file.buffer)
     );
 

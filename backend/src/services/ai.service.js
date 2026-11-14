@@ -41,7 +41,7 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
                         Job Description: ${jobDescription}
 `
 
-    const response = await ai.models.generateContent({
+    const response = await googleGenAI.models.generateContent({
         model: "gemini-3-flash-preview",
         contents: prompt,
         config: {
