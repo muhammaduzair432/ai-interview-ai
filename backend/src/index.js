@@ -13,6 +13,8 @@ dotenv.config(
     {path:`./.env`}
 );
 
+// Test Gemini when server starts
+
 connectdb().then(() => {
     app.listen({port: process.env.PORT}, () => {
         console.log(`Server is running on port ${process.env.PORT}`);

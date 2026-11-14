@@ -1,0 +1,76 @@
+
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { ApiError } from "../utils/Apierror.js";
+import { interviewReportModel } from "../models/interviewReport.model.js";
+
+import { generateInterviewReport } from "../services/ai.service.js";
+
+async function generateInterViewReportController(req, res) {
+  try {
+    // Check uploaded resume
+    if (!req.file) {
+      throw new ApiError(400, "Please upload your resume.");
+    }
+
+    const { selfDescription, jobDescription } = req.body;
+
+    if (!selfDescription || !jobDescription) {
+      throw new ApiError(
+        400,
+        "Self description and job description are required."
+      );
+    }
+
+    // Extract text from PDF
+    const pdf = new pdfParse.PDFParse(
+      Uint8Array.from(req.file.buffer)
+    );
+
+    const resumeContent = await pdf.getText();
+
+    if (!resumeContent.text?.trim()) {
+      throw new ApiError(400, "Unable to extract text from resume.");
+    }
+
+    // Generate interview report using AI
+    const interViewReportByAi = await generateInterviewReport({
+      resume: resumeContent.text,
+      selfDescription,
+      jobDescription,
+    });
+
+    // Save report in MongoDB
+    const interviewReport = await interviewReportModel.create({
+      user: req.user.id,
+      resume: resumeContent.text,
+      selfDescription,
+      jobDescription,
+      ...interViewReportByAi,
+    });
+
+    // Send success response
+    return res.status(201).json(
+      new ApiResponse(
+        201,
+        interviewReport,
+        "Interview report generated successfully."
+      )
+    );
+
+  } catch (error) {
+    console.error("Interview Report Error:", error);
+
+    if (error instanceof ApiError) {
+      return res.status(error.statusCode).json(error);
+    }
+
+    return res.status(500).json(
+      new ApiError(
+        500,
+        error.message || "Failed to generate interview report."
+      )
+    );
+  }
+}
+
+export { generateInterViewReportController };
