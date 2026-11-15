@@ -40,6 +40,12 @@ async function generateInterViewReportController(req, res) {
       jobDescription,
     });
 
+
+
+console.log("========== GEMINI RESPONSE ==========");
+console.log(JSON.stringify(interViewReportByAi, null, 2));
+console.log("=====================================");
+
     // Save report in MongoDB (skip validation for testing)
 const interviewReport = new InterviewReport({
   user: req.user.id,
@@ -51,8 +57,8 @@ const interviewReport = new InterviewReport({
 
 await interviewReport.save({ validateBeforeSave: false });
 
-console.log("Resume text:", resumeContent.text);
-console.log("Resume text length:", resumeContent.text?.length);
+// console.log("Resume text:", resumeContent.text);
+// console.log("Resume text length:", resumeContent.text?.length);
 
     // Send success response
     return res.status(201).json(
