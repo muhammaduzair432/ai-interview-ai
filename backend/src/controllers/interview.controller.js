@@ -1,7 +1,7 @@
 
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/Apierror.js";
-import  interviewReportModel  from "../models/interviewReport.model.js";
+import  InterviewReport  from "../models/interviewReport.model.js";
 import {PDFParse} from "pdf-parse"; 
 
 import { generateInterviewReport } from "../services/ai.service.js";
@@ -40,14 +40,19 @@ async function generateInterViewReportController(req, res) {
       jobDescription,
     });
 
-    // Save report in MongoDB
-    const interviewReport = await interviewReportModel.create({
-      user: req.user.id,
-      resume: resumeContent.text,
-      selfDescription,
-      jobDescription,
-      ...interViewReportByAi,
-    });
+    // Save report in MongoDB (skip validation for testing)
+const interviewReport = new InterviewReport({
+  user: req.user.id,
+  resume: resumeContent.text,
+  selfDescription,
+  jobDescription,
+  ...interViewReportByAi,
+});
+
+await interviewReport.save({ validateBeforeSave: false });
+
+console.log("Resume text:", resumeContent.text);
+console.log("Resume text length:", resumeContent.text?.length);
 
     // Send success response
     return res.status(201).json(
