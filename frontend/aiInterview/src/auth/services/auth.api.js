@@ -42,4 +42,7 @@ export const logoutUser = async () => {
         console.error('Error logging out user:', error);
         throw error;
     }
+
+
+    
 }
