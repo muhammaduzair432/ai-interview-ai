@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 
@@ -10,8 +10,22 @@ const Register = () => {
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
     const [usernameError, setUsernameError] = useState("")
+    const [showAvatarModal, setShowAvatarModal] = useState(false)
+    const [avatar, setAvatar] = useState(null)
+    const [avatarPreview, setAvatarPreview] = useState("")
 
     const { loading, handleRegister } = useAuth()
+
+    useEffect(() => {
+        if (!avatar) {
+            setAvatarPreview("")
+            return
+        }
+
+        const previewUrl = URL.createObjectURL(avatar)
+        setAvatarPreview(previewUrl)
+        return () => URL.revokeObjectURL(previewUrl)
+    }, [avatar])
 
     const handleSubmit = async (event) => {
         event.preventDefault()
@@ -27,11 +41,19 @@ const Register = () => {
 
         setUsernameError("")
 
+        setShowAvatarModal(true)
+    }
+
+    const completeRegistration = async () => {
+        setError("")
+
         try {
-            await handleRegister(username, email, password, fullname)
+            await handleRegister(username, email, password, fullname, avatar)
+            setShowAvatarModal(false)
             navigate("/")
         } catch {
             setError("We could not create your account. Please try again.")
+            setShowAvatarModal(false)
         }
     }
 
@@ -139,6 +161,91 @@ const Register = () => {
             <div className="relative hidden overflow-hidden bg-gradient-to-br from-blue-600 to-blue-400 lg:block" aria-hidden="true">
                 <div className="absolute left-1/2 top-1/2 h-[440px] w-[440px] -translate-x-1/2 -translate-y-1/2 rotate-12 rounded-[42px] border border-white/25 shadow-[0_0_0_36px_rgba(255,255,255,0.05),0_0_0_72px_rgba(255,255,255,0.04)]"></div>
             </div>
+
+            {showAvatarModal && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 px-4 py-6 backdrop-blur-sm"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="avatar-modal-title"
+                >
+                    <div className="relative w-full max-w-md rounded-3xl border border-white/70 bg-white p-6 shadow-[0_24px_70px_rgba(15,23,42,0.24)] sm:p-8">
+                        <button
+                            type="button"
+                            onClick={() => setShowAvatarModal(false)}
+                            className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                            aria-label="Close profile picture popup"
+                        >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5" aria-hidden="true">
+                                <path d="M18 6 6 18M6 6l12 12" />
+                            </svg>
+                        </button>
+
+                        <div className="mb-6 pr-8">
+                            <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.16em] text-blue-600">Make it yours</p>
+                            <h2 id="avatar-modal-title" className="text-2xl font-black tracking-tight text-slate-900">Add a profile picture</h2>
+                            <p className="mt-2 text-sm leading-relaxed text-slate-500">Upload a clear photo for your interview profile.</p>
+                        </div>
+
+                        <label
+                            htmlFor="avatar"
+                            className="group mx-auto flex min-h-52 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 px-5 py-7 text-center transition hover:border-blue-400 hover:bg-blue-50/40"
+                        >
+                            {avatarPreview ? (
+                                <div className="flex flex-col items-center">
+                                    <img
+                                        src={avatarPreview}
+                                        alt="Selected profile preview"
+                                        className="h-32 w-32 rounded-full object-cover ring-4 ring-white shadow-[0_12px_30px_rgba(37,99,235,0.18)]"
+                                    />
+                                    <span className="mt-4 text-sm font-bold text-blue-700">Change profile picture</span>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col items-center">
+                                    <span className="grid h-16 w-16 place-items-center rounded-2xl bg-blue-600 text-white shadow-[0_10px_24px_rgba(37,99,235,0.22)] transition group-hover:-translate-y-1">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-8 w-8" aria-hidden="true">
+                                            <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5" />
+                                            <path d="M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4" />
+                                        </svg>
+                                    </span>
+                                    <span className="mt-4 text-sm font-extrabold text-slate-800">Choose a photo</span>
+                                    <span className="mt-1 text-xs text-slate-400">PNG, JPG or WEBP</span>
+                                </div>
+                            )}
+                            <input
+                                type="file"
+                                id="avatar"
+                                name="avatar"
+                                accept="image/png,image/jpeg,image/webp"
+                                className="sr-only"
+                                onChange={(event) => setAvatar(event.target.files?.[0] || null)}
+                            />
+                        </label>
+
+                        <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                            {!avatar ? (
+                                <button
+                                    type="button"
+                                    onClick={completeRegistration}
+                                    disabled={loading}
+                                    className="h-[48px] flex-1 rounded-[10px] border border-slate-200 bg-white px-5 text-sm font-extrabold text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-wait disabled:opacity-70 sm:flex-none"
+                                >
+                                    Skip
+                                </button>
+                            ) : (
+                                <button
+                                    type="button"
+                                    onClick={completeRegistration}
+                                    disabled={loading}
+                                    className="h-[48px] flex-1 rounded-[10px] border-0 bg-blue-600 px-8 text-sm font-extrabold text-white shadow-[0_10px_24px_rgba(37,99,235,0.22)] transition hover:-translate-y-px hover:bg-blue-700 disabled:cursor-wait disabled:opacity-70 sm:flex-none"
+                                >
+                                    {loading ? "Creating account..." : "OK"}
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </main>
     )
 }

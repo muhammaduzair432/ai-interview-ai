@@ -8,20 +8,33 @@ const Login = () => {
     const navigate = useNavigate()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [emailError, setEmailError] = useState("")
+    const [passwordError, setPasswordError] = useState("")
     const [error, setError] = useState("")
 
     const handleSubmit = async (event) => {
         event.preventDefault()
         setError("")
+        setEmailError("")
+        setPasswordError("")
 
         try {
             await handleLogin(email, password)
             navigate('/')
         } catch (error) {
-            setError(
-                error.response?.data?.message ||
-                "Unable to sign in. Check your connection and try again."
-            )
+            const status = error.response?.status
+            const message = error.response?.data?.message
+
+            if (status === 404 || /email|user.*not found/i.test(message || "")) {
+                setEmailError("Email is incorrect or not registered.")
+            } else if (status === 401 || /password|credentials/i.test(message || "")) {
+                setPasswordError("Password is incorrect.")
+            } else {
+                setError(
+                    message ||
+                    "Unable to sign in. Check your connection and try again."
+                )
+            }
         }
     }
 
@@ -51,8 +64,10 @@ const Login = () => {
                             placeholder="you@example.com"
                             autoComplete="email"
                             required
-                            className="h-[50px] w-full rounded-[10px] border border-slate-200 px-4 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10"
+                            onInput={() => setEmailError("")}
+                            className={`h-[50px] w-full rounded-[10px] border px-4 text-slate-900 outline-none transition placeholder:text-slate-400 focus:ring-4 ${emailError ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-200 focus:border-blue-600 focus:ring-blue-600/10"}`}
                         />
+                        {emailError && <p className="text-sm text-red-600" role="alert">{emailError}</p>}
                     </div>
 
                     <div className="flex flex-col gap-2">
@@ -66,8 +81,10 @@ const Login = () => {
                             placeholder="Enter your password"
                             autoComplete="current-password"
                             required
-                            className="h-[50px] w-full rounded-[10px] border border-slate-200 px-4 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10"
+                            onInput={() => setPasswordError("")}
+                            className={`h-[50px] w-full rounded-[10px] border px-4 text-slate-900 outline-none transition placeholder:text-slate-400 focus:ring-4 ${passwordError ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-slate-200 focus:border-blue-600 focus:ring-blue-600/10"}`}
                         />
+                        {passwordError && <p className="text-sm text-red-600" role="alert">{passwordError}</p>}
                     </div>
 
                     {error && <p className="rounded-lg bg-red-50 px-3 py-2.5 text-sm text-red-700" role="alert">{error}</p>}

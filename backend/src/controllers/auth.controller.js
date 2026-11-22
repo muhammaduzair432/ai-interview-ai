@@ -119,12 +119,19 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     // Avatar upload
-    const avatarLocalPath = req.file?.buffer || req.file?.path;
+    const avatarLocalPath = req.files?.avatar?.[0]?.path || req.file?.path;
 
     let avatar = null;
 
     if (avatarLocalPath) {
-        avatar = await uploadOnCloudinary(avatarLocalPath);
+        try {
+            avatar = await uploadOnCloudinary(avatarLocalPath);
+        } catch (error) {
+            throw new ApiError(
+                502,
+                error.message || "Profile picture upload failed"
+            );
+        }
     }
 
     // Create user
@@ -181,7 +188,7 @@ const loginUser = asyncHandler(async (req, res) => {
     if (!user) {
         throw new ApiError(
             404,
-            "User not found with this email"
+            "Email is incorrect or not registered"
         );
     }
 
@@ -191,7 +198,7 @@ const loginUser = asyncHandler(async (req, res) => {
     if (!isPasswordValid) {
         throw new ApiError(
             401,
-            "Invalid user credentials"
+            "Password is incorrect"
         );
     }
 
@@ -226,6 +233,7 @@ const loginUser = asyncHandler(async (req, res) => {
 // ==========================================
 
 export const googleAuthCallback = async (req, res) => {
+    const frontendUrl = process.env.FRONTEND_URL || "http://127.0.0.1:5173";
 
     try {
 
@@ -233,7 +241,7 @@ export const googleAuthCallback = async (req, res) => {
 
         if (!user) {
             return res.redirect(
-                "http://localhost:5173/login?error=GoogleAuthFailed"
+                `${frontendUrl}/login?error=GoogleAuthFailed`
             );
         }
 
@@ -243,14 +251,14 @@ export const googleAuthCallback = async (req, res) => {
         return res
             .cookie("accessToken", accessToken, cookieOptions)
             .cookie("refreshToken", refreshToken, cookieOptions)
-            .redirect("http://localhost:5173/dashboard");
+            .redirect(`${frontendUrl}/dashboard`);
 
     } catch (error) {
 
         console.error("Google Auth Error:", error);
 
         return res.redirect(
-            "http://localhost:5173/login?error=ServerError"
+            `${frontendUrl}/login?error=ServerError`
         );
     }
 };

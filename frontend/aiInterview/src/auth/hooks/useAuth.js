@@ -6,10 +6,10 @@ export const useAuth = () => {
     const context = useContext(AuthContext);
     const { user, setUser, loading, setloading } = context;
 
-    const handleRegister = async (username, email, password, fullname) => {
+    const handleRegister = async (username, email, password, fullname, avatar) => {
         setloading(true);
         try {
-            const data = await registerUser(username, email, password, fullname);
+           const data = await registerUser(username, email, password, fullname, avatar);
             setUser(data.user);
             return data;
         } catch (error) {

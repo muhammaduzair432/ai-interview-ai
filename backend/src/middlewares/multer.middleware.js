@@ -1,10 +1,14 @@
 import multer from "multer";
+import fs from "fs";
+
+const tempDirectory = "./public/temp";
+fs.mkdirSync(tempDirectory, { recursive: true });
 
 
 // permanent storage for avatar uploads
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, "./public/temp")
+      cb(null, tempDirectory)
     },
     filename: function (req, file, cb) {
       

@@ -1,17 +1,19 @@
 import axios from 'axios';
 const api= axios.create({
-    baseURL: 'http://localhost:5000/api/v1',
+    baseURL: '/api/v1',
     withCredentials: true,
 })
 
-export const registerUser = async  (username,email,password,fullname) => {
+export const registerUser = async  (username,email,password,fullname,avatar) => {
     try {
-        const response = await api.post('/user/registerUser', {
-            username,
-            email,
-            password,
-            fullname
-        });
+        const formData = new FormData();
+        formData.append('username', username);
+        formData.append('email', email);
+        formData.append('password', password);
+        formData.append('fullname', fullname);
+        if (avatar) formData.append('avatar', avatar);
+
+        const response = await api.post('/user/registerUser', formData);
         return response.data;
     }
     catch (error) {
