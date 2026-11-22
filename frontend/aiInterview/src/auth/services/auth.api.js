@@ -22,7 +22,7 @@ export const registerUser = async  (username,email,password,fullname) => {
 
 export const loginUser = async (email, password) => {
     try {
-        const response = await api.post('/user/loginUser', {
+        const response = await api.post('/user/login', {
             email,
             password
         });
