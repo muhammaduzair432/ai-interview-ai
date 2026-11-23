@@ -37,7 +37,7 @@ export const loginUser = async (email, password) => {
 }
 export const logoutUser = async () => {
     try {
-        const response = await api.post('/user/logoutUser');    
+        const response = await api.post('/user/logout');
     return response.data;
     }
     catch (error) {

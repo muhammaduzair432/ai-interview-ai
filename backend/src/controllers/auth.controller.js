@@ -251,7 +251,7 @@ export const googleAuthCallback = async (req, res) => {
         return res
             .cookie("accessToken", accessToken, cookieOptions)
             .cookie("refreshToken", refreshToken, cookieOptions)
-            .redirect(`${frontendUrl}/dashboard`);
+            .redirect(`${frontendUrl}/`);
 
     } catch (error) {
 
@@ -277,7 +277,7 @@ const logoutUser = asyncHandler(async (req, res) => {
             }
         },
         {
-            new: true
+            returnDocument: "after"
         }
     );
 

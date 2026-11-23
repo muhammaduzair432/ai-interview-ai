@@ -10,7 +10,7 @@ export const useAuth = () => {
         setloading(true);
         try {
            const data = await registerUser(username, email, password, fullname, avatar);
-            setUser(data.user);
+            setUser(data.data || data.user || null);
             return data;
         } catch (error) {
            console.log('Error in handleRegister:', error);
@@ -24,7 +24,7 @@ export const useAuth = () => {
         setloading(true);
         try {
             const data = await loginUser(email, password);
-            setUser(data.user);
+            setUser(data.data?.user || data.user || null);
             return data;
         } catch (error) {
             console.log('Error in handleLogin:', error);
@@ -49,7 +49,7 @@ export const useAuth = () => {
     const handleGetCurrentUser = async () => {
         try {
             const data = await getCurrentUser()
-            setUser(data.user)
+            setUser(data.data || data.user || null)
             return data
         } catch (error) {
             setUser(null)

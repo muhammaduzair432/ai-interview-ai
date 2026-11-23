@@ -1,16 +1,30 @@
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 
 import { useAuth } from '../hooks/useAuth'
 
 const Login = () => {
     const { loading, handleLogin } = useAuth()
     const navigate = useNavigate()
+    const [searchParams] = useSearchParams()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [emailError, setEmailError] = useState("")
     const [passwordError, setPasswordError] = useState("")
     const [error, setError] = useState("")
+
+    useEffect(() => {
+        const authError = searchParams.get("error")
+        if (authError === "GoogleAuthFailed") {
+            setError("Google authentication failed. Please try again.")
+        } else if (authError === "ServerError") {
+            setError("Unable to complete Google authentication. Please try again.")
+        }
+    }, [searchParams])
+
+    const handleGoogleLogin = () => {
+        window.location.href = "/api/auth/google"
+    }
 
     const handleSubmit = async (event) => {
         event.preventDefault()
@@ -93,6 +107,26 @@ const Login = () => {
                         {loading ? "Signing in..." : "Sign in"}
                     </button>
                 </form>
+
+                <div className="my-5 flex items-center gap-3">
+                    <div className="h-px flex-1 bg-slate-200"></div>
+                    <span className="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">or</span>
+                    <div className="h-px flex-1 bg-slate-200"></div>
+                </div>
+
+                <button
+                    type="button"
+                    onClick={handleGoogleLogin}
+                    className="flex h-[52px] w-full items-center justify-center gap-3 rounded-[10px] border border-blue-200 bg-blue-50 px-4 text-[15px] font-extrabold text-slate-700 shadow-sm transition hover:border-blue-600 hover:bg-blue-100 hover:shadow-[0_10px_24px_rgba(37,99,235,0.18)] focus:outline-none focus:ring-4 focus:ring-blue-600/20"
+                >
+                    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="#4285F4" d="M21.6 12.227c0-.709-.064-1.391-.182-2.045H12v3.868h5.382a4.6 4.6 0 0 1-1.995 3.018v2.51h3.231c1.891-1.741 2.982-4.309 2.982-7.351Z"/>
+                        <path fill="#34A853" d="M12 22c2.7 0 4.964-.895 6.618-2.422l-3.231-2.51c-.895.6-2.04.955-3.387.955-2.609 0-4.818-1.763-5.609-4.131H3.055v2.591A10 10 0 0 0 12 22Z"/>
+                        <path fill="#FBBC05" d="M6.391 13.892A6.013 6.013 0 0 1 6.073 12c0-.655.113-1.293.318-1.892V7.517H3.055A10 10 0 0 0 2 12c0 1.614.386 3.143 1.055 4.483l3.336-2.591Z"/>
+                        <path fill="#EA4335" d="M12 5.977c1.468 0 2.786.505 3.823 1.495l2.868-2.868C16.959 2.991 14.7 2 12 2a10 10 0 0 0-8.945 5.517l3.336 2.591C7.182 7.74 9.391 5.977 12 5.977Z"/>
+                    </svg>
+                    <span>Continue with Google</span>
+                </button>
 
                 <p className="mt-6 text-center text-sm text-slate-500">
                     Don&apos;t have an account? <Link className="font-extrabold text-blue-600 no-underline" to="/register">Create account</Link>

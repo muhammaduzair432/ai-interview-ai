@@ -14,14 +14,23 @@ passport.use(
                 let user = await userModel.findOne({ email: profile.emails[0].value });
 
                 if (user) {
-                    // If user exists but didn't have googleId saved, link it
+                    let userChanged = false;
+
                     if (!user.googleId) {
                         user.googleId = profile.id;
-                        if (!user.avatar && profile.photos?.[0]?.value) {
-                            user.avatar = profile.photos[0].value;
-                        }
+                        userChanged = true;
+                    }
+
+                    const googleAvatar = profile.photos?.[0]?.value;
+                    if (googleAvatar && user.avatar !== googleAvatar) {
+                        user.avatar = googleAvatar;
+                        userChanged = true;
+                    }
+
+                    if (userChanged) {
                         await user.save();
                     }
+
                     return done(null, user);
                 }
 

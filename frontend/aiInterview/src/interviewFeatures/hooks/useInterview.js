@@ -1,8 +1,9 @@
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import {
     generateInterviewReport,
     getInterviewReportById,
     getUserInterviewReports,
+    downloadResumePdf,
 } from "../services/interview.api.js";
 import { InterviewContext } from "../services/interview.context.jsx"
 import {useParams} from "react-router-dom"
@@ -18,7 +19,8 @@ export const useInterview = () => {
         throw new Error("useInterview must be used within an InterviewProvider")
     }
 
-    const { loading, setLoading, report, setReport, reports, setReports } = context
+    const { loading, setLoading, reportsLoading, setReportsLoading, report, setReport, reports, setReports } = context
+    const [downloadingResume, setDownloadingResume] = useState(false)
 
     const generateReport = async ({ jobDescription, selfDescription, resumeFile }) => {
         setLoading(true)
@@ -56,6 +58,7 @@ export const useInterview = () => {
     }
 
     const getAllReports = async () => {
+        setReportsLoading(true)
         try {
             const response = await getUserInterviewReports()
             const userReports = response.data || response.reports || response
@@ -64,24 +67,34 @@ export const useInterview = () => {
         } catch (error) {
             console.log(error)
             throw error
+        } finally {
+            setReportsLoading(false)
         }
     }
 
-    const getResumePdf = (id) => {
-        const resumeText = report?.resume
-        if (!resumeText) return
-
-        const blob = new Blob([resumeText], { type: "text/plain;charset=utf-8" })
-        const url = URL.createObjectURL(blob)
-        const anchor = document.createElement("a")
-        anchor.href = url
-        anchor.download = `${report.title || "interview"}-resume.txt`
-        anchor.click()
-        URL.revokeObjectURL(url)
+    const getResumePdf = async (id) => {
+        setDownloadingResume(true)
+        try {
+            const pdfBlob = await downloadResumePdf(id)
+            const url = URL.createObjectURL(pdfBlob)
+            const anchor = document.createElement("a")
+            anchor.href = url
+            anchor.download = `resume_${id}.pdf`
+            document.body.appendChild(anchor)
+            anchor.click()
+            anchor.remove()
+            URL.revokeObjectURL(url)
+        } catch (error) {
+            console.log(error)
+            throw error
+        } finally {
+            setDownloadingResume(false)
+        }
     }
 
     return {
         loading,
+        reportsLoading,
         setLoading,
         report,
         setReport,
@@ -91,5 +104,6 @@ export const useInterview = () => {
         getReportById,
         getAllReports,
         getResumePdf,
+        downloadingResume,
     }
 }

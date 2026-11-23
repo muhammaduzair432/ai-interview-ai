@@ -27,3 +27,11 @@ export const getUserInterviewReports = async () => {
     const response = await api.get("/my-reports")
     return response.data
 }
+
+export const downloadResumePdf = async (interviewReportId) => {
+    const response = await api.get(`/resume/${interviewReportId}/pdf`, {
+        responseType: "blob",
+    })
+
+    return response.data
+}

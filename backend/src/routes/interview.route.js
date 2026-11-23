@@ -5,6 +5,7 @@ import {
   generateInterViewReportController,
   getInterviewReportById,
   getUserInterviewReports,
+  generateResumePdfController,
 } from "../controllers/interview.controller.js";
  
 const interviewRoutes = express.Router();
@@ -18,6 +19,11 @@ interviewRoutes.post("/generateReport",
 interviewRoutes.get("/my-reports",
   verifyJwt,
   getUserInterviewReports
+);
+
+interviewRoutes.get("/resume/:interviewReportId/pdf",
+  verifyJwt,
+  generateResumePdfController
 );
 
 interviewRoutes.get("/:interviewId",

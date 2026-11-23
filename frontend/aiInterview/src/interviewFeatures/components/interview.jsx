@@ -47,7 +47,8 @@ const QuestionCard = ({ item, index, accent = "blue" }) => {
 
 const Interview = () => {
     const [activeNav, setActiveNav] = useState("technical")
-    const { report, getReportById, getResumePdf, loading } = useInterview()
+    const { report, getReportById, getResumePdf, loading, downloadingResume } = useInterview()
+    const [resumeDownloadError, setResumeDownloadError] = useState("")
     const { user, handleGetCurrentUser } = useAuth()
     const { interviewId } = useParams()
     const navigate = useNavigate()
@@ -123,11 +124,22 @@ const Interview = () => {
 
                     <button
                         type="button"
-                        onClick={() => getResumePdf(interviewId)}
-                        className="h-11 rounded-lg border border-blue-600 px-4 text-sm font-extrabold text-blue-600 transition hover:bg-blue-50"
+                        onClick={() => {
+                            setResumeDownloadError("")
+                            getResumePdf(interviewId).catch(() => {
+                                setResumeDownloadError("Unable to download the resume PDF.")
+                            })
+                        }}
+                        disabled={downloadingResume}
+                        className="h-11 rounded-lg border border-blue-600 px-4 text-sm font-extrabold text-blue-600 transition hover:bg-blue-50 disabled:cursor-wait disabled:opacity-60"
                     >
-                        Download resume
+                        {downloadingResume ? "Generating PDF..." : "Download resume"}
                     </button>
+                    {resumeDownloadError && (
+                        <p className="mt-2 text-sm font-bold text-red-600" role="alert">
+                            {resumeDownloadError}
+                        </p>
+                    )}
                 </section>
 
                 <div className="grid gap-6 xl:grid-cols-[220px_minmax(0,1fr)_260px]">
