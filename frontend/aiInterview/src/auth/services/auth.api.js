@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const apiOrigin = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
+const apiOrigin = (import.meta.env.VITE_API_URL || 'https://ai-interview-ai-six.vercel.app').replace(/\/$/, '')
 
 const api= axios.create({
     baseURL: `${apiOrigin}/api/v1`,
