@@ -1,1 +1,37 @@
 @import "tailwindcss";
+
+.animated-interview-text {
+  display: inline-block;
+  background: linear-gradient(90deg, #2563EB 0%, #2563EB 38%, #60A5FA 50%, #2563EB 62%, #2563EB 100%);
+  background-size: 220% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: interview-text-in 0.7s ease-out both, interview-text-shimmer 3.2s ease-in-out 0.8s infinite;
+}
+
+@keyframes interview-text-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes interview-text-shimmer {
+  0%, 20% {
+    background-position: 100% 0;
+  }
+  55%, 100% {
+    background-position: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animated-interview-text {
+    animation: none;
+  }
+}

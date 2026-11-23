@@ -239,7 +239,7 @@ const Home = () => {
                 <section className="mb-8">
                     <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.16em] text-blue-600">Interview planning</p>
                     <h1 className="max-w-3xl text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
-                        Create your custom interview strategy
+                        Create your <span className="animated-interview-text">custom interview strategy</span>
                     </h1>
                     <p className="mt-3 max-w-2xl leading-relaxed text-slate-500">
                         Add the role you are targeting and either upload your resume or describe your experience.
@@ -301,7 +301,11 @@ const Home = () => {
                             ) : (
                                 <label htmlFor="resume" className="flex min-h-28 cursor-pointer items-center gap-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-5 transition hover:border-blue-400 hover:bg-[#EFF6FF]">
                                     <div className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-white text-blue-600 shadow-sm">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                            <path d="M12 3v12" />
+                                            <path d="m7 10 5 5 5-5" />
+                                            <path d="M5 21h14" />
+                                        </svg>
                                     </div>
                                     <div>
                                         <p className="text-sm font-extrabold text-slate-700">Choose resume</p>
@@ -477,7 +481,7 @@ const Home = () => {
                                         <span className="font-mono text-xs font-semibold tabular-nums text-slate-400">
                                             {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "Recently generated"}
                                         </span>
-                                        <span className="text-sm font-extrabold text-[#2563EB]">View report →</span>
+                                        <span className="text-sm font-extrabold text-[#2563EB]">View report </span>
                                     </div>
                                 </button>
                                 )
