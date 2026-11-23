@@ -23,7 +23,7 @@ const Login = () => {
     }, [searchParams])
 
     const handleGoogleLogin = () => {
-        const apiOrigin = (import.meta.env.VITE_API_URL || "https://ai-interview-ai-six.vercel.app").replace(/\/$/, "")
+        const apiOrigin = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "")
         window.location.href = `${apiOrigin}/api/auth/google`
     }
 

@@ -1,20 +1,13 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import  {userModel}  from "../models/user.model.js";
-const googleConfigured = Boolean(
-    process.env.GOOGLE_CLIENT_ID &&
-    process.env.GOOGLE_CLIENT_SECRET &&
-    process.env.GOOGLE_CALLBACK_URL
-);
-
-if (googleConfigured) {
-    passport.use(
-        new GoogleStrategy(
-            {
-                clientID: process.env.GOOGLE_CLIENT_ID,
-                clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                callbackURL: process.env.GOOGLE_CALLBACK_URL,
-            },
+passport.use(
+    new GoogleStrategy(
+        {
+            clientID: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            callbackURL: process.env.GOOGLE_CALLBACK_URL, // e.g. http://localhost:5000/api/auth/google/callback
+        },
         async (accessToken, refreshToken, profile, done) => {
             try {
                 // 1. Check if user already exists with this email
@@ -61,5 +54,4 @@ if (googleConfigured) {
             }
         }
     )
-    );
-}
+);
