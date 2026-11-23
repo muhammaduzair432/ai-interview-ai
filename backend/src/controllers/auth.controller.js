@@ -127,10 +127,10 @@ const registerUser = asyncHandler(async (req, res) => {
         try {
             avatar = await uploadOnCloudinary(avatarLocalPath);
         } catch (error) {
-            throw new ApiError(
-                502,
-                error.message || "Profile picture upload failed"
-            );
+            console.error("Avatar upload failed; registering user without an avatar:", {
+                message: error.message,
+                httpCode: error.http_code,
+            });
         }
     }
 

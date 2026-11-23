@@ -62,7 +62,12 @@ const uploadOnCloudinary = async (fileInput) => {
             console.error("Error removing local temp file during error handling:", unlinkErr);
         }
     }
-    
+
+  if (error?.http_code === 403) {
+    error.message =
+      "Cloudinary rejected the signed upload (403). Check upload permissions and API credentials.";
+  }
+
     throw error;
   }
 };

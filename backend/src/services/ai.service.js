@@ -183,7 +183,7 @@ IMPORTANT:
   console.log("Running INTERVIEW REPORT SERVICE V2");
 
   const response = await googleGenAI.models.generateContent({
-    model: "gemini-3-flash-preview",
+    model: "gemini-3.1-flash-lite",
     contents: prompt,
     config: {
       responseMimeType: "application/json",

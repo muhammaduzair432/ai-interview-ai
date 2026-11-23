@@ -85,4 +85,29 @@ await interviewReport.save({ validateBeforeSave: false });
   }
 }
 
-export { generateInterViewReportController };
+async function getInterviewReportById(req, res) {
+ try {
+   const report = await InterviewReport.findOne({
+     _id: req.params.interviewId,
+     user: req.user.id,
+   });
+
+   if (!report) {
+     throw new ApiError(404, "Interview report not found.");
+   }
+
+   return res.status(200).json(
+     new ApiResponse(200, report, "Interview report fetched successfully.")
+   );
+ } catch (error) {
+   if (error instanceof ApiError) {
+     return res.status(error.statusCode).json(error);
+   }
+
+   return res.status(500).json(
+     new ApiError(500, error.message || "Failed to fetch interview report.")
+   );
+ }
+}
+
+export { generateInterViewReportController, getInterviewReportById };
