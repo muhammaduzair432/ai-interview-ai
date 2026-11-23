@@ -6,9 +6,9 @@
   "type": "module",
   "scripts": {
     "dev": "npm --prefix aiInterview run dev",
-    "build": "npm --prefix aiInterview run build",
+    "build": "npm --prefix aiInterview ci --include=optional && npm --prefix aiInterview run build",
     "preview": "npm --prefix aiInterview run preview",
-    "postinstall": "npm --prefix aiInterview ci"
+    "postinstall": "npm --prefix aiInterview ci --include=optional"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.5",
@@ -20,5 +20,9 @@
   "devDependencies": {
     "@vitejs/plugin-react": "latest",
     "vite": "latest"
+  },
+  "optionalDependencies": {
+    "@tailwindcss/oxide-linux-x64-gnu": "4.3.5",
+    "lightningcss-linux-x64-gnu": "1.33.0"
   }
 }
