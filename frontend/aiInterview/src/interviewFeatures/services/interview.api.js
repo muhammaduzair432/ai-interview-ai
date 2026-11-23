@@ -1,7 +1,9 @@
 import axios from "axios";
 
+const apiOrigin = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+
 const api = axios.create({
-  baseURL: "/api/v1/interview",
+  baseURL: `${apiOrigin}/api/v1/interview`,
   withCredentials: true,
 });
 

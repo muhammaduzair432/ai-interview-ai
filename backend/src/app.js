@@ -12,7 +12,9 @@ app.use(express.static("public"));
 app.use(passport.initialize());
 app.use(cookieParser());
 const allowedOrigins = [
-    process.env.FRONTEND_URL || "http://localhost:5173/",
+    ...(process.env.FRONTEND_URLS || process.env.FRONTEND_URL || "http://localhost:5173")
+        .split(",")
+        .map((origin) => origin.trim().replace(/\/$/, "")),
     "http://localhost:5173",
 ];
 app.use(cors({

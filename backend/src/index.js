@@ -2,6 +2,7 @@ import  {app} from "./app.js";
 import  {connectdb} from "./ConfigDb/db.js";
 import  dotenv from "dotenv";
 import dns from "dns";
+import { fileURLToPath } from "url";
 
 
 
@@ -13,16 +14,19 @@ dotenv.config(
     {path:`./.env`}
 );
 
-// Test Gemini when server starts
+const startServer = async () => {
+    await connectdb();
+    const port = process.env.PORT || 5000;
+    app.listen(port, () => {
+        console.log(`Server is running on port ${port}`);
+    });
+};
 
-connectdb().then(() => {
-    app.listen({port: process.env.PORT}, () => {
-        console.log(`Server is running on port ${process.env.PORT}`);
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+    startServer().catch((error) => {
+        console.error("mongodb connection error:", error);
+        process.exit(1);
     });
-    app.on("error", (error) => {
-        console.log("Server error:", error);
-        throw error;
-    });
-}).catch((error) => {
-    console.error("mongodb connection error:", error);
-});
+}
+
+export default app;

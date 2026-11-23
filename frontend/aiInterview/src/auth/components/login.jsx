@@ -23,7 +23,8 @@ const Login = () => {
     }, [searchParams])
 
     const handleGoogleLogin = () => {
-        window.location.href = "/api/auth/google"
+        const apiOrigin = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "")
+        window.location.href = `${apiOrigin}/api/auth/google`
     }
 
     const handleSubmit = async (event) => {

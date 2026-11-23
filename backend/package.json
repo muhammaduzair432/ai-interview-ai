@@ -3,7 +3,9 @@
   "description": "An AI-powered interview application",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon -r dotenv/config  src/index.js"
+    "dev": "nodemon -r dotenv/config src/index.js",
+    "start": "node src/index.js",
+    "vercel-build": "node -e \"console.log('Backend ready for Vercel')\""
   },
   "keywords": [],
   "author": "",
