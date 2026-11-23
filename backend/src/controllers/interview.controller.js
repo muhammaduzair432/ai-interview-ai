@@ -110,4 +110,24 @@ async function getInterviewReportById(req, res) {
  }
 }
 
-export { generateInterViewReportController, getInterviewReportById };
+async function getUserInterviewReports(req, res) {
+  try {
+    const reports = await InterviewReport.find({ user: req.user.id })
+      .sort({ createdAt: -1 })
+      .select("-resume");
+
+    return res.status(200).json(
+      new ApiResponse(200, reports, "Interview reports fetched successfully.")
+    );
+  } catch (error) {
+    return res.status(500).json(
+      new ApiError(500, error.message || "Failed to fetch interview reports.")
+    );
+  }
+}
+
+export {
+  generateInterViewReportController,
+  getInterviewReportById,
+  getUserInterviewReports,
+};

@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../auth/hooks/useAuth.js'
 
 const Home = () => {
-    const { loading, generateReport, reports, report } = useInterview()
-    const { user, handleGetCurrentUser, handleLogout } = useAuth()
+    const { loading, generateReport, reports, report, getAllReports } = useInterview()
+    const { user, handleGetUserProfile, handleLogout } = useAuth()
     const [jobDescription, setJobDescription] = useState("")
     const [selfDescription, setSelfDescription] = useState("")
     const [resumeName, setResumeName] = useState("")
@@ -18,8 +18,12 @@ const Home = () => {
 
     useEffect(() => {
         if (!user) {
-            handleGetCurrentUser().catch(() => {})
+            handleGetUserProfile().catch(() => {})
         }
+    }, [])
+
+    useEffect(() => {
+        getAllReports().catch(() => {})
     }, [])
 
     useEffect(() => {
@@ -45,8 +49,8 @@ const Home = () => {
     }
 
     const allReports = report ? [report, ...reports.filter((item) => item._id !== report._id)] : reports
-    const displayName = user?.fullname || user?.name || user?.username || "AI Candidate"
-    const avatarInitial = displayName.trim().charAt(0).toUpperCase()
+    const displayName = user?.fullname || user?.username || ""
+    const avatarInitial = displayName.trim().charAt(0).toUpperCase() || "?"
 
     const handleGenerateReport = async () => {
         setError("")
@@ -156,22 +160,22 @@ const Home = () => {
                                         )}
                                         <div className="min-w-0">
                                             <p className="truncate font-extrabold text-slate-900">{displayName}</p>
-                                            <p className="mt-1 truncate text-xs text-slate-500">{user?.email || "Email unavailable"}</p>
+                                            <p className="mt-1 truncate text-xs text-slate-500">{user?.email || ""}</p>
                                         </div>
                                     </div>
 
                                     <dl className="space-y-3 text-sm">
                                         <div>
                                             <dt className="text-xs font-bold uppercase tracking-wide text-slate-400">Full name</dt>
-                                            <dd className="mt-1 font-bold text-slate-700">{user?.fullname || user?.name || "Not provided"}</dd>
+                                            <dd className="mt-1 font-bold text-slate-700">{user?.fullname || "—"}</dd>
                                         </div>
                                         <div>
                                             <dt className="text-xs font-bold uppercase tracking-wide text-slate-400">Username</dt>
-                                            <dd className="mt-1 font-bold text-slate-700">@{user?.username || "not-set"}</dd>
+                                            <dd className="mt-1 font-bold text-slate-700">@{user?.username || "—"}</dd>
                                         </div>
                                         <div>
                                             <dt className="text-xs font-bold uppercase tracking-wide text-slate-400">Email</dt>
-                                            <dd className="mt-1 break-all font-bold text-slate-700">{user?.email || "Not provided"}</dd>
+                                            <dd className="mt-1 break-all font-bold text-slate-700">{user?.email || "—"}</dd>
                                         </div>
                                     </dl>
 
@@ -245,7 +249,7 @@ const Home = () => {
                             </label>
 
                             <div className="my-5 flex items-center gap-3 text-xs font-extrabold text-slate-400">
-                                <span className="h-px flex-1 bg-slate-200" />OR<span className="h-px flex-1 bg-slate-200" />
+                                <span className="h-px flex-1 bg-slate-200" />Both<span className="h-px flex-1 bg-slate-200" />
                             </div>
 
                             <label className="mb-2 block text-sm font-bold text-slate-700" htmlFor="selfDescription">Quick self-description</label>
@@ -275,11 +279,110 @@ const Home = () => {
                             type="button"
                             onClick={handleGenerateReport}
                             disabled={loading}
-                            className="h-[52px] rounded-[10px] border-0 bg-blue-600 px-6 text-sm font-extrabold text-white shadow-[0_10px_24px_rgba(37,99,235,0.22)] transition hover:-translate-y-px hover:bg-blue-700 disabled:cursor-wait disabled:opacity-70"
+                            className="flex h-[52px] items-center justify-center gap-2 rounded-[10px] border-0 bg-blue-600 px-6 text-sm font-extrabold text-white shadow-[0_10px_24px_rgba(37,99,235,0.22)] transition hover:-translate-y-px hover:bg-blue-700 disabled:cursor-wait disabled:opacity-75"
                         >
-                            {loading ? "Generating your strategy..." : "Generate interview strategy"}
+                            {loading ? (
+                                <>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="20"
+                                        height="20"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        className="animate-pulse"
+                                        aria-hidden="true"
+                                    >
+                                        <defs>
+                                            <linearGradient id="gemini-loading-gradient" x1="3" y1="21" x2="21" y2="3" gradientUnits="userSpaceOnUse">
+                                                <stop stopColor="#60A5FA" />
+                                                <stop offset="0.5" stopColor="#FFFFFF" />
+                                                <stop offset="1" stopColor="#A78BFA" />
+                                            </linearGradient>
+                                        </defs>
+                                        <path d="M12 2C12 7.523 16.477 12 22 12C16.477 12 12 16.477 12 22C12 16.477 7.523 12 2 12C7.523 12 12 7.523 12 2Z" fill="url(#gemini-loading-gradient)" />
+                                    </svg>
+                                    <span>Generating your strategy...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="18"
+                                        height="18"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        aria-hidden="true"
+                                    >
+                                        <defs>
+                                            <linearGradient id="gemini-button-gradient" x1="3" y1="21" x2="21" y2="3" gradientUnits="userSpaceOnUse">
+                                                <stop stopColor="#93C5FD" />
+                                                <stop offset="0.5" stopColor="#FFFFFF" />
+                                                <stop offset="1" stopColor="#C4B5FD" />
+                                            </linearGradient>
+                                        </defs>
+                                        <path d="M12 2C12 7.523 16.477 12 22 12C16.477 12 12 16.477 12 22C12 16.477 7.523 12 2 12C7.523 12 12 7.523 12 2Z" fill="url(#gemini-button-gradient)" />
+                                    </svg>
+                                    <span>Generate interview report </span>
+                                </>
+                            )}
                         </button>
                     </footer>
+                </section>
+
+                <section className="mt-8">
+                    <div className="mb-5 flex items-end justify-between gap-4">
+                        <div>
+                            <p className="mb-1 text-xs font-extrabold uppercase tracking-[0.16em] text-blue-600">Dashboard</p>
+                            <h2 className="text-2xl font-black text-slate-900">My interview reports</h2>
+                        </div>
+                        {reports.length > 0 && (
+                            <span className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-600">
+                                {reports.length} {reports.length === 1 ? "report" : "reports"}
+                            </span>
+                        )}
+                    </div>
+
+                    {reports.length === 0 ? (
+                        <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
+                            <div className="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-blue-50 text-blue-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+                            </div>
+                            <h3 className="mt-4 font-extrabold text-slate-900">No interview reports yet</h3>
+                            <p className="mt-1 text-sm text-slate-500">Generate your first report using the form above.</p>
+                        </div>
+                    ) : (
+                        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                            {reports.map((item) => (
+                                <button
+                                    key={item._id}
+                                    type="button"
+                                    onClick={() => openReport(item._id)}
+                                    className="rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-[0_8px_30px_rgba(15,23,42,0.05)] transition hover:-translate-y-1 hover:border-blue-200"
+                                >
+                                    <div className="mb-5 flex items-start justify-between gap-3">
+                                        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-blue-50 text-blue-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="16" rx="2" /><line x1="7" y1="8" x2="17" y2="8" /><line x1="7" y1="12" x2="17" y2="12" /><line x1="7" y1="16" x2="12" y2="16" /></svg>
+                                        </div>
+                                        <span className="rounded-full bg-blue-50 px-3 py-1.5 text-sm font-black text-blue-600">
+                                            {item.matchScore ?? 0}%
+                                        </span>
+                                    </div>
+                                    <h3 className="truncate text-lg font-extrabold text-slate-900">
+                                        {item.title || "Untitled interview"}
+                                    </h3>
+                                    <p className="mt-2 line-clamp-2 min-h-10 text-sm leading-5 text-slate-500">
+                                        {item.jobDescription || "Interview preparation report"}
+                                    </p>
+                                    <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
+                                        <span className="text-xs font-semibold text-slate-400">
+                                            {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "Recently generated"}
+                                        </span>
+                                        <span className="text-sm font-extrabold text-blue-600">Open report</span>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </section>
 
             </div>

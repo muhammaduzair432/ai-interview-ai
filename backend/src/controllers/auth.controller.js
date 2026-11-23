@@ -302,6 +302,28 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 })
 
+const getUserProfile = asyncHandler(async (req, res) => {
+    const user = await userModel.findById(req.user._id)
+        .select("fullname username email avatar");
+
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    res.status(200).json(
+        new ApiResponse(
+            200,
+            {
+                fullname: user.fullname,
+                username: user.username,
+                email: user.email,
+                avatar: user.avatar || "",
+            },
+            "User profile fetched successfully"
+        )
+    );
+});
+
 // ==========================================
 // EXPORT CONTROLLERS
 // ==========================================
@@ -310,5 +332,6 @@ export {
     registerUser,
     loginUser,
     getCurrentUser,
+    getUserProfile,
     logoutUser
 };

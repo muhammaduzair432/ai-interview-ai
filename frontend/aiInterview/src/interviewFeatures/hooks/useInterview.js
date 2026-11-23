@@ -1,5 +1,9 @@
 import { useContext } from "react"
-import {generateInterviewReport, getInterviewReportById} from "../services/interview.api.js";
+import {
+    generateInterviewReport,
+    getInterviewReportById,
+    getUserInterviewReports,
+} from "../services/interview.api.js";
 import { InterviewContext } from "../services/interview.context.jsx"
 import {useParams} from "react-router-dom"
 
@@ -21,8 +25,13 @@ export const useInterview = () => {
         let response = null
         try {
             response = await generateInterviewReport({ jobDescription, selfDescription, resumeFile })
-            setReport(response.data || response.interviewReport)
-            return response.data || response.interviewReport
+            const interviewReport = response.data || response.interviewReport
+            setReport(interviewReport)
+            setReports((current) => [
+                interviewReport,
+                ...current.filter((item) => item._id !== interviewReport._id),
+            ])
+            return interviewReport
         } catch (error) {
             console.log(error)
             throw error
@@ -46,6 +55,18 @@ export const useInterview = () => {
         }
     }
 
+    const getAllReports = async () => {
+        try {
+            const response = await getUserInterviewReports()
+            const userReports = response.data || response.reports || response
+            setReports(Array.isArray(userReports) ? userReports : [])
+            return userReports
+        } catch (error) {
+            console.log(error)
+            throw error
+        }
+    }
+
     const getResumePdf = (id) => {
         const resumeText = report?.resume
         if (!resumeText) return
@@ -59,5 +80,16 @@ export const useInterview = () => {
         URL.revokeObjectURL(url)
     }
 
-    return { loading, setLoading, report, setReport, reports, setReports, generateReport, getReportById, getResumePdf }
+    return {
+        loading,
+        setLoading,
+        report,
+        setReport,
+        reports,
+        setReports,
+        generateReport,
+        getReportById,
+        getAllReports,
+        getResumePdf,
+    }
 }

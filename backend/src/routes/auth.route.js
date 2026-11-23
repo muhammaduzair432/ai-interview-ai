@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { loginUser, registerUser,googleAuthCallback,getCurrentUser} from "../controllers/auth.controller.js";
+import { loginUser, registerUser,googleAuthCallback,getCurrentUser,getUserProfile} from "../controllers/auth.controller.js";
 import  {upload} from "../middlewares/multer.middleware.js"
 import { logoutUser } from "../controllers/auth.controller.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
@@ -15,6 +15,7 @@ router.route("/registerUser").post( upload.fields([
 ,registerUser)
 router.route("/login").post(loginUser)
 router.route("/current-user").get(verifyJwt,getCurrentUser)
+router.route("/profile").get(verifyJwt,getUserProfile)
 // SECURED ROUTES
  router.route("/logout").post(verifyJwt,logoutUser)
  // Google Auth Routes
