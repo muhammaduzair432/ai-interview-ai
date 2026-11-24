@@ -1,13 +1,8 @@
 import "dotenv/config";
 import  {app} from "./app.js";
 import  {connectdb} from "./ConfigDb/db.js";
-import dns from "dns";
 import { fileURLToPath } from "url";
 
-
-
-// change dns 
-dns.setServers(["1.1.1.1","8.8.8.8"]);
 
 
 const startServer = async () => {
