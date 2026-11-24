@@ -1,7 +1,10 @@
 import multer from "multer";
 import fs from "fs";
+import os from "os";
+import path from "path";
+import { randomUUID } from "crypto";
 
-const tempDirectory = "./public/temp";
+const tempDirectory = path.join(os.tmpdir(), "ai-interview-ai", "uploads");
 fs.mkdirSync(tempDirectory, { recursive: true });
 
 
@@ -11,8 +14,7 @@ const storage = multer.diskStorage({
       cb(null, tempDirectory)
     },
     filename: function (req, file, cb) {
-      
-      cb(null, file.originalname)
+      cb(null, `${randomUUID()}${path.extname(file.originalname)}`)
     }
   })
   
