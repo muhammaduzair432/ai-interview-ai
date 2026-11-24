@@ -6,7 +6,10 @@ let databaseReady;
 
 export default async function handler(request, response) {
     if (!databaseReady) {
-        databaseReady = connectdb();
+        databaseReady = connectdb().catch((error) => {
+            databaseReady = undefined;
+            throw error;
+        });
     }
     await databaseReady;
     return app(request, response);

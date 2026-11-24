@@ -1,6 +1,6 @@
+import "dotenv/config";
 import  {app} from "./app.js";
 import  {connectdb} from "./ConfigDb/db.js";
-import  dotenv from "dotenv";
 import dns from "dns";
 import { fileURLToPath } from "url";
 
@@ -9,10 +9,6 @@ import { fileURLToPath } from "url";
 // change dns 
 dns.setServers(["1.1.1.1","8.8.8.8"]);
 
-
-dotenv.config(
-    {path:`./.env`}
-);
 
 const startServer = async () => {
     await connectdb();
