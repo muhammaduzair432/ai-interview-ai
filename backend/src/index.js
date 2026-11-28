@@ -13,11 +13,11 @@ const startServer = async () => {
     });
 };
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+// if (process.argv[1] === fileURLToPath(import.meta.url)) {
     startServer().catch((error) => {
         console.error("mongodb connection error:", error);
         process.exit(1);
     });
-}
+// }
 
 export default app;
